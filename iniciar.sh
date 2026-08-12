@@ -245,7 +245,7 @@ export PREFIX_CONTENEDOR="${NOMBRE_CARPETA}"
 # ==============================================================================
 echo "🐳 3. Desplegando contenedores ($NOMBRE_CARPETA)..."
 
-docker compose down -v > /dev/null 2>&1 || true
+docker compose down > /dev/null 2>&1 || true
 docker compose up -d --force-recreate -V --remove-orphans
 
 # ==============================================================================
