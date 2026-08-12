@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    image: mi_p1_web:latest
     container_name: ${PREFIX_CONTENEDOR:-app}_web
     ports:
       - "${PUERTO_WEB:-1080}:80"
