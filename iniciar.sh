@@ -240,6 +240,17 @@ export PUERTO_DB
 export PUERTO_PMA
 export PREFIX_CONTENEDOR="${NOMBRE_CARPETA}"
 
+# Persistimos las variables en un .env dentro de la carpeta de la instancia.
+# Así, futuras sesiones SSH que solo hagan "docker compose down/up" en esta
+# carpeta (sin volver a correr este script) usarán siempre el mismo prefijo
+# y por lo tanto el mismo volumen de datos, evitando perder la base de datos.
+cat > .env <<EOF
+PUERTO_WEB=${PUERTO_WEB}
+PUERTO_DB=${PUERTO_DB}
+PUERTO_PMA=${PUERTO_PMA}
+PREFIX_CONTENEDOR=${PREFIX_CONTENEDOR}
+EOF
+
 # ==============================================================================
 # 4. LEVANTAMIENTO DE CONTENEDORES
 # ==============================================================================
