@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: ${PREFIX_CONTENEDOR:-app}_web
+    ports:
+      - "${PUERTO_WEB:-1080}:80"
+    restart: always
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: ${PREFIX_CONTENEDOR:-app}_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: base_principal
+      MYSQL_USER: usuario_app
+      MYSQL_PASSWORD: clave_usuario
+    ports:
+      - "${PUERTO_DB:-3308}:3306"
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: ${PREFIX_CONTENEDOR:-app}_pma
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "${PUERTO_PMA:-1081}:80"
+    restart: always
+    depends_on:
+      - db
