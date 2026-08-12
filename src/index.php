@@ -272,7 +272,7 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
         <header class="flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 gap-4 transition-colors">
             <div>
                 <h1 class="text-3xl font-extrabold text-indigo-400 flex items-center gap-3">
-                    <i class="fa-solid fa-cubes text-3xl"></i> Dashboard Docker
+                    <i class="fa-solid fa-cubes text-3xl"></i> BlockNotes
                 </h1>
                 <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Apache + PHP <?= phpversion() ?> | Sistema de Notas Interactivo</p>
             </div>
