@@ -9,6 +9,8 @@ services:
     restart: always
     depends_on:
       - db
+    volumes:
+      - web_uploads:/var/www/html/uploads
 
   db:
     image: mysql:8.0
@@ -39,3 +41,5 @@ services:
 volumes:
   db_data:
     name: ${PREFIX_CONTENEDOR:-app}_db_data
+  web_uploads:
+    name: ${PREFIX_CONTENEDOR:-app}_web_uploads

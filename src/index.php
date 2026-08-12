@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->execute()) {
                 $exito = "¡Registro exitoso! Ahora puedes iniciar sesión.";
             } else {
-                $error = "El nombre de usuario ya está en uso.";
+                $error = "Este usuario ya existe.";
             }
             $stmt->close();
         }
@@ -194,6 +194,15 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard LAMP - Animación Wobbly Windows</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        // Aplicar el tema guardado lo antes posible para evitar parpadeo
+        if (localStorage.getItem('tema') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -251,25 +260,36 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen py-10 px-4">
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen py-10 px-4 transition-colors">
 
     <div class="max-w-4xl mx-auto space-y-8">
         
-        <header class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 gap-4">
+        <header class="flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 gap-4 transition-colors">
             <div>
                 <h1 class="text-3xl font-extrabold text-indigo-400 flex items-center gap-3">
                     <i class="fa-solid fa-cubes text-3xl"></i> Dashboard Docker
                 </h1>
-                <p class="text-slate-400 text-sm mt-1">Apache + PHP <?= phpversion() ?> | Sistema de Notas Interactivo</p>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Apache + PHP <?= phpversion() ?> | Sistema de Notas Interactivo</p>
             </div>
             
             <?php if (isset($_SESSION['user_id'])): ?>
                 <div class="flex items-center gap-4">
-                    <span class="text-sm text-slate-300">Usuario: <b><?= htmlspecialchars($_SESSION['username']) ?></b></span>
+                    <button id="btnTema" onclick="alternarTema()" type="button"
+                            class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg w-9 h-9 flex items-center justify-center transition"
+                            title="Cambiar tema">
+                        <i id="iconoTema" class="fa-solid fa-moon"></i>
+                    </button>
+                    <span class="text-sm text-slate-600 dark:text-slate-300">Usuario: <b><?= htmlspecialchars($_SESSION['username']) ?></b></span>
                     <a href="index.php?logout=true" class="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-lg text-xs font-semibold transition">
                         <i class="fa-solid fa-right-from-bracket"></i> Salir
                     </a>
                 </div>
+            <?php else: ?>
+                <button id="btnTema" onclick="alternarTema()" type="button"
+                        class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg w-9 h-9 flex items-center justify-center transition"
+                        title="Cambiar tema">
+                    <i id="iconoTema" class="fa-solid fa-moon"></i>
+                </button>
             <?php endif; ?>
         </header>
 
@@ -287,31 +307,31 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                     </div>
                 <?php endif; ?>
 
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl transition-colors">
                     <h2 class="text-xl font-bold text-indigo-400 mb-4"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</h2>
                     <form action="index.php" method="POST" class="space-y-4">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Usuario</label>
-                            <input type="text" name="usuario" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Usuario</label>
+                            <input type="text" name="usuario" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Contraseña</label>
-                            <input type="password" name="password" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Contraseña</label>
+                            <input type="password" name="password" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         </div>
                         <button type="submit" name="login" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 rounded-lg text-sm transition">Entrar</button>
                     </form>
                 </div>
 
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl transition-colors">
                     <h2 class="text-xl font-bold text-emerald-400 mb-4"><i class="fa-solid fa-user-plus"></i> Registrarse</h2>
                     <form action="index.php" method="POST" class="space-y-4">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Nuevo Usuario</label>
-                            <input type="text" name="usuario" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Nuevo Usuario</label>
+                            <input type="text" name="usuario" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 transition-colors">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Contraseña</label>
-                            <input type="password" name="password" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Contraseña</label>
+                            <input type="password" name="password" required class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 transition-colors">
                         </div>
                         <button type="submit" name="registrar" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 rounded-lg text-sm transition">Crear Cuenta</button>
                     </form>
@@ -322,14 +342,14 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
         <?php else: ?>
             <div class="grid md:grid-cols-3 gap-8">
                 
-                <div class="md:col-span-1 bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl h-fit">
+                <div class="md:col-span-1 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl h-fit transition-colors">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-slate-200 flex items-center gap-2">
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                             <i class="fa-solid <?= $modo_edicion ? 'fa-pen-to-square text-amber-400' : 'fa-plus-circle text-indigo-400' ?>"></i> 
                             <?= $modo_edicion ? 'Editar Nota' : 'Nueva Nota' ?>
                         </h2>
                         <?php if ($modo_edicion): ?>
-                            <a href="index.php" class="text-xs text-slate-400 hover:text-slate-200 underline">Cancelar</a>
+                            <a href="index.php" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 underline">Cancelar</a>
                         <?php endif; ?>
                     </div>
                     
@@ -337,22 +357,22 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                         <input type="hidden" name="id" value="<?= $id_editar ?>">
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Título</label>
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Título</label>
                             <input type="text" name="titulo" required placeholder="Título..." 
                                    value="<?= htmlspecialchars($titulo_editar) ?>"
-                                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition">
+                                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Descripción</label>
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Descripción</label>
                             <textarea name="descripcion" rows="3" placeholder="Detalles..." 
-                                      class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition"><?= htmlspecialchars($descripcion_editar) ?></textarea>
+                                      class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"><?= htmlspecialchars($descripcion_editar) ?></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Adjuntar Imagen</label>
+                            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Adjuntar Imagen</label>
                             <input type="file" name="imagen" accept="image/*" 
-                                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 file:mr-4 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500">
+                                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 file:mr-4 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 transition-colors">
                         </div>
 
                         <button type="submit" name="guardar_tarea" 
@@ -363,7 +383,7 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                 </div>
 
                 <div class="md:col-span-2 space-y-4">
-                    <h2 class="text-xl font-bold text-slate-200 flex items-center gap-2">
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-indigo-400"></i> Tus Notas Personales
                     </h2>
 
@@ -383,11 +403,11 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                                         '<?= date("d/m/Y H:i", strtotime($tarea['fecha_creacion'])) ?>', 
                                         '<?= !empty($tarea['fecha_modificacion']) ? date("d/m/Y H:i", strtotime($tarea['fecha_modificacion'])) : '' ?>'
                                     )" 
-                                    class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-md flex flex-col sm:flex-row justify-between items-start gap-4 hover:border-indigo-500/60 hover:bg-slate-800/80 cursor-pointer transition group">
+                                    class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md flex flex-col sm:flex-row justify-between items-start gap-4 hover:border-indigo-500/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 cursor-pointer transition group">
                                     
                                     <div class="space-y-2 flex-1">
                                         <h3 class="font-bold text-indigo-300 text-lg group-hover:text-indigo-200 transition"><?= htmlspecialchars($tarea['titulo']) ?></h3>
-                                        <p class="text-slate-400 text-sm line-clamp-2"><?= htmlspecialchars($tarea['descripcion']) ?></p>
+                                        <p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-2"><?= htmlspecialchars($tarea['descripcion']) ?></p>
                                         
                                         <?php if (!empty($tarea['imagen'])): ?>
                                             <div class="pt-1">
@@ -397,7 +417,7 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                                             </div>
                                         <?php endif; ?>
 
-                                        <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2 border-t border-slate-700/50 mt-2">
+                                        <div class="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-700/50 mt-2">
                                             <span><i class="fa-regular fa-calendar-plus text-emerald-400"></i> Creado: <b><?= date("d/m/Y H:i", strtotime($tarea['fecha_creacion'])) ?></b></span>
                                             
                                             <?php if (!empty($tarea['fecha_modificacion']) && $tarea['fecha_modificacion'] !== $tarea['fecha_creacion']): ?>
@@ -407,10 +427,10 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                                     </div>
 
                                     <div class="flex items-center gap-2 self-end sm:self-start" onclick="event.stopPropagation();">
-                                        <a href="index.php?editar=<?= $tarea['id'] ?>" class="text-slate-400 hover:text-amber-400 p-2 transition" title="Editar">
+                                        <a href="index.php?editar=<?= $tarea['id'] ?>" class="text-slate-500 dark:text-slate-400 hover:text-amber-400 p-2 transition" title="Editar">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
-                                        <a href="index.php?eliminar=<?= $tarea['id'] ?>" class="text-slate-400 hover:text-rose-400 p-2 transition" title="Eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');">
+                                        <a href="index.php?eliminar=<?= $tarea['id'] ?>" class="text-slate-500 dark:text-slate-400 hover:text-rose-400 p-2 transition" title="Eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>
                                     </div>
@@ -418,7 +438,7 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                             <?php endwhile; ?>
                         </div>
                     <?php else: ?>
-                        <div class="bg-slate-800/50 border border-dashed border-slate-700 p-8 rounded-xl text-center text-slate-500">
+                        <div class="bg-slate-100 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 p-8 rounded-xl text-center text-slate-500 dark:text-slate-500 transition-colors">
                             <i class="fa-solid fa-inbox text-4xl mb-2"></i>
                             <p>No tienes notas registradas. ¡Crea una usando el formulario!</p>
                         </div>
@@ -431,33 +451,33 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
     </div>
 
     <div id="modalNota" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" style="display: none;">
-        <div id="modalContenido" class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 relative">
+        <div id="modalContenido" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 relative transition-colors">
             
             <div class="flex justify-between items-start gap-4">
-                <h3 id="modalTitulo" class="text-xl font-bold text-indigo-300 pr-2"></h3>
+                <h3 id="modalTitulo" class="text-xl font-bold text-indigo-500 dark:text-indigo-300 pr-2"></h3>
                 
                 <div class="flex items-center gap-1 shrink-0">
-                    <a id="modalBtnEditar" href="" class="text-slate-400 hover:text-amber-400 p-2 transition" title="Editar">
+                    <a id="modalBtnEditar" href="" class="text-slate-500 dark:text-slate-400 hover:text-amber-400 p-2 transition" title="Editar">
                         <i class="fa-solid fa-pen"></i>
                     </a>
-                    <a id="modalBtnEliminar" href="" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');" class="text-slate-400 hover:text-rose-400 p-2 transition" title="Eliminar">
+                    <a id="modalBtnEliminar" href="" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');" class="text-slate-500 dark:text-slate-400 hover:text-rose-400 p-2 transition" title="Eliminar">
                         <i class="fa-solid fa-trash-can"></i>
                     </a>
-                    <button onclick="cerrarModal()" class="text-slate-400 hover:text-slate-100 p-2 transition ml-2" title="Cerrar">
+                    <button onclick="cerrarModal()" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 p-2 transition ml-2" title="Cerrar">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
             </div>
             
             <div id="modalContenedorImagen" class="hidden">
-                <img id="modalImagen" src="" alt="Imagen de nota" class="w-full max-h-72 object-contain rounded-xl border border-slate-700 bg-slate-900/50">
+                <img id="modalImagen" src="" alt="Imagen de nota" class="w-full max-h-72 object-contain rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900/50">
             </div>
 
-            <p id="modalDescripcion" class="text-slate-300 text-sm whitespace-pre-wrap leading-relaxed"></p>
+            <p id="modalDescripcion" class="text-slate-700 dark:text-slate-300 text-sm whitespace-pre-wrap leading-relaxed"></p>
 
-            <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-3 border-t border-slate-700">
-                <span>Creado: <b id="modalCreado" class="text-slate-200"></b></span>
-                <span id="modalModificadoContenedor" class="hidden">Modificado: <b id="modalModificado" class="text-slate-200"></b></span>
+            <div class="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-200 dark:border-slate-700">
+                <span>Creado: <b id="modalCreado" class="text-slate-800 dark:text-slate-200"></b></span>
+                <span id="modalModificadoContenedor" class="hidden">Modificado: <b id="modalModificado" class="text-slate-800 dark:text-slate-200"></b></span>
             </div>
         </div>
     </div>
@@ -520,6 +540,21 @@ if (isset($_SESSION['user_id']) && isset($_GET['editar'])) {
                 contenido.classList.remove('animar-wobbly-salida');
             }, 300);
         }
+
+        function alternarTema() {
+            const esOscuro = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('tema', esOscuro ? 'dark' : 'light');
+            actualizarIconoTema();
+        }
+
+        function actualizarIconoTema() {
+            const icono = document.getElementById('iconoTema');
+            if (!icono) return;
+            const esOscuro = document.documentElement.classList.contains('dark');
+            icono.className = esOscuro ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+
+        actualizarIconoTema();
 
         window.onclick = function(event) {
             let modal = document.getElementById('modalNota');
