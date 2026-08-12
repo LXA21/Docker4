@@ -22,7 +22,7 @@ services:
       - "${PUERTO_DB:-3308}:3306"
     restart: always
     volumes:
-      - ${PREFIX_CONTENEDOR:-app}_db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -37,4 +37,5 @@ services:
       - db
 
 volumes:
-  ${PREFIX_CONTENEDOR:-app}_db_data:
+  db_data:
+    name: ${PREFIX_CONTENEDOR:-app}_db_data
