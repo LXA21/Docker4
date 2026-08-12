@@ -15,10 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($usuario) && !empty($_POST['password'])) {
             $stmt = $conn->prepare("INSERT INTO usuarios (usuario, password) VALUES (?, ?)");
             $stmt->bind_param("ss", $usuario, $password);
-            if ($stmt->execute()) {
+            try {
+                $stmt->execute();
                 $exito = "¡Registro exitoso! Ahora puedes iniciar sesión.";
-            } else {
-                $error = "Este usuario ya existe.";
+            } catch (mysqli_sql_exception $e) {
+                if ($conn->errno === 1062) {
+                    $error = "Este usuario ya existe.";
+                } else {
+                    $error = "Ocurrió un error al registrar el usuario.";
+                }
             }
             $stmt->close();
         }
